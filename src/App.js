@@ -1,33 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
+import Generator from "./components/Generator";
+import Profile from "./components/Profile";
+import { loadData } from "./utils/localStorage";
 
 function App() {
+  const [activePage, setActivePage] = useState("Generator");
+  const [resume, setResume] = useState("");
+  const [openAiKey, setOpenAiKey] = useState("");
+
+  useEffect(() => {
+    const fetchLocalData = async () => {
+      const fetchedResume = await loadData("resume");
+      const fetchedOpenAiKey = await loadData("openAiKey");
+
+      setResume(fetchedResume);
+      setOpenAiKey(fetchedOpenAiKey);
+    };
+    fetchLocalData();
+  }, []);
+
+  const togglePage = (page) => {
+    setActivePage(page);
+  };
   return (
-    <div className="flex flex-col h-full items-center justify-center bg-gray-200 text-gray-700">
-      <div className="flex items-center">
-        <h1 className="text-6xl font-thin tracking-wider">Create React App + Tailwind CSS</h1>
-      </div>
-      <p className="my-6 tracking-wide">
-        Edit <code>src/App.js</code> and save to reload.
-      </p>
-      <div className="mt-6 flex justify-center">
-        <a
-          className="uppercase hover:underline"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <a
-          className="ml-10 uppercase hover:underline"
-          href="https://tailwindcss.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn Tailwind
-        </a>
-      </div>
-    </div>
+    <>
+      {activePage === "Generator" ? (
+        <Generator
+          togglePage={togglePage}
+          resume={resume}
+          openAiKey={openAiKey}
+        />
+      ) : (
+        <Profile
+          togglePage={togglePage}
+          resume={resume}
+          setResume={setResume}
+          openAiKey={openAiKey}
+          setOpenAiKey={setOpenAiKey}
+        />
+      )}
+    </>
   );
 }
 
